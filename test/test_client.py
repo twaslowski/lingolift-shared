@@ -1,5 +1,4 @@
 import json
-from unittest.mock import Mock
 
 import pytest
 from aioresponses import aioresponses
@@ -102,6 +101,32 @@ async def test_syntactical_analysis_happy_path(mocked):
     assert isinstance(analyses, list)
     assert len(analyses) == 2
     assert isinstance(analyses[1], SyntacticalAnalysis)
+
+
+@pytest.mark.asyncio
+async def test_syntactical_analysis_with_language_code():
+    """
+    There is a bunch of stuff going on here.
+    First off, the check_request function is required to introspect a request object and validate its data.
+    The reason mocked() is redefined here instead of being injected via the fixture is that the mocked()
+    fixture's behaviour is manipulated globally if I use the mock, which interferes with other tests' behaviours.
+    """
+
+    async def check_request(_, **kwargs):
+        data = kwargs["json"]
+        assert "sentence" in data
+        assert data["sentence"] == "some sentence"
+        assert "language_code" in data
+        assert data["language_code"] == "en"
+
+        with aioresponses() as mocked:
+            mocked.post(
+                f"{client.host}/syntactical-analysis",
+                callback=check_request,
+            )
+
+        # Call the fetch_syntactical_analysis method
+        await client.fetch_syntactical_analysis("some sentence", "en")
 
 
 @pytest.mark.asyncio

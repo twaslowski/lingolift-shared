@@ -3,9 +3,11 @@ import os
 import pytest
 
 from shared.client import Client
-from shared.exception import (ApplicationException,
-                              LanguageNotAvailableException,
-                              SentenceTooLongException)
+from shared.exception import (
+    ApplicationException,
+    LanguageNotAvailableException,
+    SentenceTooLongException,
+)
 
 client = Client(host=os.environ["API_GATEWAY_HOST"])
 

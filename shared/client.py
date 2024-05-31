@@ -4,7 +4,7 @@ import aiohttp
 from aiohttp.client_reqrep import ClientResponse
 
 from shared.exception import ApplicationException
-from shared.model.inflection import Inflection, Inflections
+from shared.model.inflection import Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
@@ -71,17 +71,22 @@ class Client:
                     await self.handle_failure("literal-translation", response)
 
     async def fetch_syntactical_analysis(
-        self, sentence: str
+        self, sentence: str, language_code: str = None
     ) -> list[SyntacticalAnalysis]:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
+        :param language_code: ISO-639-1 language code. If not provided, the language will be detected.
         :param sentence: Sentence for which to fetch syntactical analysis
         :return: list of SyntacticalAnalysis objects in case of a 200 status code, ApplicationException otherwise
         """
         logging.info(f"fetching syntactical analysis for sentence '{sentence}'")
+        # build event; only add language code if provided
+        event = {"sentence": sentence}
+        if language_code:
+            event["language_code"] = language_code
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                f"{self.host}/syntactical-analysis", json={"sentence": sentence}
+                f"{self.host}/syntactical-analysis", json=event
             ) as response:
                 if response.status == 200:
                     analyses = await response.json()

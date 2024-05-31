@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 
 
-## quality-gates: Quick and easy quality confirmations
-function task_quality_gates {
-  set -e
-  task_format
-  task_type_check
-  task_test
-}
-
 ## formatting: Applies formatting
 function task_format {
   poetry run isort .
