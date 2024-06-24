@@ -1,6 +1,7 @@
 from enum import Enum, EnumMeta
 from typing import TypeVar
 
+from spacy.tokens import Doc
 from spacy.tokens.token import Token as SpacyToken
 
 from shared.model.token.feature import (
@@ -20,13 +21,48 @@ from shared.model.token.upos import UPOS
 T = TypeVar("T", bound=Enum)
 
 
+def from_spacy_doc(doc: Doc) -> list[LLToken]:
+    """
+    Converts a list of spaCy tokens to a list of more structured Token objects.
+    """
+    spacy_tokens = list(doc)
+    ll_tokens = [from_spacy_token(token) for token in spacy_tokens]
+    return enrich_ll_tokens_with_ancestors(ll_tokens, spacy_tokens)
+
+
+def enrich_ll_tokens_with_ancestors(
+    ll_tokens: list[LLToken], spacy_tokens: list[SpacyToken]
+) -> list[LLToken]:
+    """
+    Enriches a list of lingolift tokens with information about their respective ancestors in the dependency tree.
+    Currently only works at depth 1, i.e. only a token's immediate parent is considered.
+    Assumes that the order of the tokens in each list is identical.
+    """
+    # Create a dictionary for faster lookup of tokens by their text content
+    ll_tokens_by_text = {token.text: token for token in ll_tokens}
+    for ll_token, spacy_token in zip(ll_tokens, spacy_tokens):
+        # For the current lingolift token, find the corresponding spaCy token's ancestor in its dependency tree
+        ancestor = next(spacy_token.ancestors, None)
+        # If one is found, find the corresponding lingolift token and assign it as the ancestor
+        # This could perhaps be made easier with the assumption that the order of the tokens is identical
+        if ancestor is not None:
+            ancestor_ll_token = ll_tokens_by_text.get(ancestor.text)
+            ll_token.ancestor = ancestor_ll_token
+    return ll_tokens
+
+
 def from_spacy_token(token: SpacyToken) -> LLToken:
     """
     Converts a spaCy token to a more structured Token object.
+    Because this function refers to a singular token without context,
+    it does not take into account dependencies between words.
+    For that, use from_spacy_doc().
     """
     return LLToken(
+        text=token.text,
+        lemma=token.lemma_,
         upos=map_upos(token),
-        feature_set=map_features(token),
+        feature_set=map_feature_set(token),
     )
 
 
@@ -37,9 +73,19 @@ def map_upos(token: SpacyToken) -> UPOS:
     return parse(token.pos_, UPOS)
 
 
-def map_features(token: SpacyToken) -> FeatureSet | None:
+def map_feature_set(token: SpacyToken) -> FeatureSet | None:
+    """
+    Extracts a FeatureSet from a spaCy token.
+    """
     upos = map_upos(token)
     tags = pos_tags_to_dict(token)
+    return feature_set_from_dict(tags, upos)
+
+
+def feature_set_from_dict(tags: dict[str, str], upos: UPOS) -> FeatureSet | None:
+    """
+    Maps a dictionary of features to a FeatureSet object.
+    """
     if upos.is_noun_like():
         return NounFeatureSet(
             case=parse(tags.get("Case").upper(), Case),

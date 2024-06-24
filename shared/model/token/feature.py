@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC
 from enum import Enum
 
@@ -19,9 +21,12 @@ class NounFeatureSet(FeatureSet):
     Applied to NOUN, PRON, DET, ADJ.
     """
 
-    case: "Case"
-    gender: "Gender"
-    number: "Number"
+    case: Case
+    number: Number
+    gender: Gender
+
+    def __str__(self):
+        return f"{self.case.value.capitalize()} {self.number.value.capitalize()} {self.gender.value.capitalize()}"
 
 
 class VerbFeatureSet(FeatureSet):
@@ -30,9 +35,12 @@ class VerbFeatureSet(FeatureSet):
     Applied to VERB, AUX.
     """
 
-    tense: "Tense"
-    person: "Person"
-    number: "Number"
+    person: Person
+    number: Number
+    tense: Tense
+
+    def __str__(self):
+        return f"{self.person.value.capitalize()} {self.number.value.capitalize()} {self.tense.value.capitalize()}"
 
 
 class Feature(Enum):
