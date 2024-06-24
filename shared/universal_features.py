@@ -1,4 +1,3 @@
-# The idea here is to be able to store all relevant
 import json
 import os
 
