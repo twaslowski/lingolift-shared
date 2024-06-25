@@ -7,18 +7,10 @@ function task_format {
   poetry run black .
 }
 
-## type-check: Runs mypy static type analysis
-function task_type_check {
-  poetry run mypy
-}
 
-## test: Runs unit tests
-function task_test {
+## test: Runs unit tests and generates test coverage
+function task_test() {
   poetry run coverage run -m pytest
-}
-
-function task_coverage() {
-  task_test
   poetry run coverage html
   poetry run coverage xml -o test/coverage.xml
   poetry run coverage-badge -f -o test/coverage.svg

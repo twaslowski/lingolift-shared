@@ -8,6 +8,7 @@ from shared.model.inflection import Inflections
 from shared.model.literal_translation import LiteralTranslation
 from shared.model.response_suggestion import ResponseSuggestion
 from shared.model.syntactical_analysis import SyntacticalAnalysis
+from shared.model.token.token import Token
 from shared.model.translation import Translation
 
 
@@ -74,7 +75,7 @@ class Client:
 
     async def fetch_syntactical_analysis(
         self, sentence: str, language_code: str | None = None
-    ) -> list[SyntacticalAnalysis] | None:
+    ) -> list[Token] | None:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param language_code: ISO-639-1 language code. If not provided, the language will be detected.
@@ -84,18 +85,16 @@ class Client:
         logging.info(f"fetching syntactical analysis for sentence '{sentence}'")
         # build event; only add language code if provided
         event = {"sentence": sentence}
-        if language_code:
-            event["language_code"] = language_code
         async with aiohttp.ClientSession() as session:
             async with session.post(
                 f"{self.host}/syntactical-analysis", json=event
             ) as response:
                 if response.status == 200:
-                    analyses = await response.json()
+                    tokens = await response.json()
                     logging.info(
-                        f"Received syntactical analysis for sentence '{sentence}': '{analyses}'"
+                        f"Received syntactical analysis for sentence '{sentence}': '{tokens}'"
                     )
-                    return [SyntacticalAnalysis(**analysis) for analysis in analyses]
+                    return [Token(**token) for token in tokens]
                 else:
                     await self.handle_failure("syntactical-analysis", response)
                     return None
