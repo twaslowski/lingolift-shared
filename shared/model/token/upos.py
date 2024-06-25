@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class UPOS(Enum):
+class UPOS(str, Enum):
     """
     Replaces the previous PartOfSpeech class.
     This is a structured way of representing the Universal POS tags, which are contained as strings in spaCy tokens.

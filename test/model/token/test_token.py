@@ -1,3 +1,4 @@
+
 import pytest
 
 from shared.model.token.feature import Case, Gender, NounFeatureSet, Number
@@ -40,3 +41,19 @@ def test_to_string_for_some_fields(minimal_token):
 def test_to_string_for_some_fields_with_lemma(minimal_token):
     minimal_token.lemma = "lemma"
     assert minimal_token.__str__() == "(from: lemma); Noun"
+
+
+def test_token_json_serialization(complete_token):
+    assert (
+        complete_token.dict().items()
+        >= {
+            "text": "text",
+            "lemma": "base-text",
+            "upos": "adjective",
+            "feature_set": {
+                "case": "nominative",
+                "number": "singular",
+                "gender": "feminine",
+            },
+        }.items()
+    )

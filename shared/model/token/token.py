@@ -30,3 +30,12 @@ class Token(BaseModel):
         if self.feature_set:
             result.append(self.feature_set.__str__())
         return "; ".join(result)
+
+    def dict(self, **kwargs):
+        return {
+            "text": self.text,
+            "lemma": self.lemma,
+            "upos": self.upos.value,
+            "feature_set": self.feature_set.dict() if self.feature_set else None,
+            "ancestor": self.ancestor.dict() if self.ancestor else None,
+        }

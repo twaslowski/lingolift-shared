@@ -18,6 +18,10 @@ class FeatureSet(ABC, BaseModel):
     def __str__(self) -> str:
         pass
 
+    def dict(self, **kwargs):
+        # iterate over the fields of the FeatureSet and return them as a dictionary
+        return {field: getattr(self, field).value for field in self.model_fields}
+
 
 class NounFeatureSet(FeatureSet):
     """
@@ -47,7 +51,7 @@ class VerbFeatureSet(FeatureSet):
         return f"{self.person.value.capitalize()} {self.number.value.capitalize()} {self.tense.value.capitalize()}"
 
 
-class Feature(Enum):
+class Feature(str, Enum):
     pass
 
 
