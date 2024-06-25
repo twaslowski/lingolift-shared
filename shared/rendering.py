@@ -84,8 +84,7 @@ class Stringifier:
     def stringify_translation(self, sentence: str, translation: Translation) -> str:
         return (
             f"{self.headline('Translation')}"
-            f"'{self.italic(sentence)}' is {self.italic(translation.language_name.capitalize())} "
-            f"and translates to '{self.italic(translation.translation)}' in English.\n"
+            f"'{self.italic(sentence)}' translates to '{self.italic(translation.translation)}' in English.\n"
         )
 
     def stringify_suggestions(self, suggestions: list[ResponseSuggestion]) -> str:
