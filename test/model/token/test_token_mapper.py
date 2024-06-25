@@ -106,4 +106,7 @@ def test_mapping_key_error(nlp):
     # This is caught and the FeatureSet is set to None
     doc = nlp("Ich werde nach Hause gehen.")
     tokens = from_spacy_doc(doc)
+
+    assert tokens[4].text == "gehen"
+    assert tokens[4].upos == UPOS.VERB
     assert tokens[4].feature_set is None
