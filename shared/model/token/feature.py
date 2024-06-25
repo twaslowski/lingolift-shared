@@ -15,7 +15,7 @@ class FeatureSet(ABC, BaseModel):
     """
 
     @abstractmethod
-    def __str__(self):
+    def __str__(self) -> str:
         pass
 
 
@@ -29,7 +29,7 @@ class NounFeatureSet(FeatureSet):
     number: Number
     gender: Gender
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.case.value.capitalize()} {self.number.value.capitalize()} {self.gender.value.capitalize()}"
 
 
@@ -43,7 +43,7 @@ class VerbFeatureSet(FeatureSet):
     number: Number
     tense: Tense
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.person.value.capitalize()} {self.number.value.capitalize()} {self.tense.value.capitalize()}"
 
 

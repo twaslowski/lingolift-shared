@@ -20,7 +20,7 @@ class Token(BaseModel):
         None  # object reference; ids could arguably used in the same way spaCy does
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = []
         if self.text != self.lemma:
             result.append(f"(from: {self.lemma})")

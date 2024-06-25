@@ -30,7 +30,7 @@ class SyntacticalAnalysis(BaseModel):
     lemma: Union[str, None]
     dependency: Union[str, None]
 
-    def stringify_lemma(self) -> str:
+    def stringify_lemma(self) -> str | None:
         return f" (from: {self.lemma})" if self.lemma else None
 
     def stringify_dependency(self) -> Union[str, None]:
@@ -52,6 +52,6 @@ class SyntacticalAnalysis(BaseModel):
         return "; ".join(properties)
 
 
-def add_property(features: list[str], feature: Union[str, None]):
+def add_property(features: list[str], feature: Union[str, None]) -> None:
     if feature:
         features.append(feature)

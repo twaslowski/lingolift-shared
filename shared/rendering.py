@@ -21,7 +21,7 @@ class Stringifier:
 
     @staticmethod
     def introductory_text() -> str:
-        return emoji.emojize(
+        return emoji.emojize(  # type: ignore
             f"""
         Hi! I'm the Grammr Bot. I will support you in learning German :Germany:.
         Send me a German sentence, and I will translate it for you and explain the Grammar.

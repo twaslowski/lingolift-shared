@@ -31,13 +31,13 @@ class UPOS(Enum):
     SYM = "symbol"
     X = "other"
 
-    def is_noun_like(self):
+    def is_noun_like(self) -> bool:
         """
         Determines if a token is likely to have features common to nouns (e.g. case, gender, number).
         """
         return self in {UPOS.NOUN, UPOS.PROPN, UPOS.PRON, UPOS.DET, UPOS.ADJ}
 
-    def is_verb_like(self):
+    def is_verb_like(self) -> bool:
         """
         Determines if a token is likely to have features common to verbs (e.g. tense, person, number).
         """

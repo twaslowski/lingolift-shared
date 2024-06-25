@@ -24,7 +24,7 @@ class Client:
         )
         self.host = host
 
-    async def fetch_translation(self, sentence: str) -> Translation:
+    async def fetch_translation(self, sentence: str) -> Translation | None:
         """
         Interacts with the /translation endpoint of the backend API.
         :param sentence: Sentence to translate
@@ -44,10 +44,11 @@ class Client:
                     return Translation(**data)
                 else:
                     await self.handle_failure("translation", response)
+                    return None
 
     async def fetch_literal_translations(
         self, sentence: str
-    ) -> list[LiteralTranslation]:
+    ) -> list[LiteralTranslation] | None:
         """
         Interacts with the /literal-translation endpoint of the backend API.
         :param sentence: Sentence for which to fetch literal translations
@@ -69,10 +70,11 @@ class Client:
                     ]
                 else:
                     await self.handle_failure("literal-translation", response)
+                    return None
 
     async def fetch_syntactical_analysis(
-        self, sentence: str, language_code: str = None
-    ) -> list[SyntacticalAnalysis]:
+        self, sentence: str, language_code: str | None = None
+    ) -> list[SyntacticalAnalysis] | None:
         """
         Interacts with the /syntactical-analysis endpoint of the backend API.
         :param language_code: ISO-639-1 language code. If not provided, the language will be detected.
@@ -96,10 +98,11 @@ class Client:
                     return [SyntacticalAnalysis(**analysis) for analysis in analyses]
                 else:
                     await self.handle_failure("syntactical-analysis", response)
+                    return None
 
     async def fetch_response_suggestions(
         self, sentence: str
-    ) -> list[ResponseSuggestion]:
+    ) -> list[ResponseSuggestion] | None:
         """
         Interacts with the /response-suggestion endpoint of the backend API.
         :param sentence: Sentence for which to fetch response suggestions
@@ -120,8 +123,9 @@ class Client:
                     ]
                 else:
                     await self.handle_failure("response-suggestion", response)
+                    return None
 
-    async def fetch_inflections(self, word: str) -> Inflections:
+    async def fetch_inflections(self, word: str) -> Inflections | None:
         logging.info(f"fetching inflections for word '{word}'")
         async with aiohttp.ClientSession() as session:
             async with session.post(
@@ -135,9 +139,10 @@ class Client:
                     return Inflections(**inflections)
                 else:
                     await self.handle_failure("inflection", response)
+                    return None
 
     @staticmethod
-    async def handle_failure(endpoint: str, response: ClientResponse):
+    async def handle_failure(endpoint: str, response: ClientResponse) -> None:
         error_data = await response.json()
         if response.status == 400:
             logging.error(

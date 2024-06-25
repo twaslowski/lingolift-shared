@@ -86,27 +86,30 @@ def feature_set_from_dict(tags: dict[str, str], upos: UPOS) -> FeatureSet | None
     """
     Maps a dictionary of features to a FeatureSet object.
     """
-    if upos.is_noun_like():
-        return NounFeatureSet(
-            case=parse(tags.get("Case").upper(), Case),
-            number=parse(tags.get("Number").upper(), Number),
-            gender=parse(tags.get("Gender").upper(), Gender),
-        )
-    elif upos.is_verb_like():
-        return VerbFeatureSet(
-            tense=parse(tags.get("Tense").upper(), Tense),
-            number=parse(tags.get("Number").upper(), Number),
-            person=parse_person(tags.get("Person")),
-        )
+    try:
+        if upos.is_noun_like():
+            return NounFeatureSet(
+                case=parse(tags["Case"].upper(), Case),
+                number=parse(tags["Number"].upper(), Number),
+                gender=parse(tags["Gender"].upper(), Gender),
+            )
+        elif upos.is_verb_like():
+            return VerbFeatureSet(
+                tense=parse(tags["Tense"].upper(), Tense),
+                number=parse(tags["Number"].upper(), Number),
+                person=parse_person(tags["Person"]),
+            )
+    except KeyError:
+        return None
     return None
 
 
-def parse[T](string: str, enum: EnumMeta) -> T:
+def parse[T](string: str, enum: EnumMeta) -> T:  # type: ignore
     """
     Parses arbitrary spaCy token attribute string into specified enum.
     For example: parse("NOUN", UPOS) -> UPOS.NOUN
     """
-    return enum.__members__.get(string)
+    return enum.__members__.get(string)  # type: ignore
 
 
 def pos_tags_to_dict(token: SpacyToken) -> dict[str, str]:
