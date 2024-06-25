@@ -98,3 +98,12 @@ def test_ancestor_mapping(nlp):
     tokens = from_spacy_doc(doc)
     assert tokens[0].ancestor == tokens[1]  # "Der" -> "Tisch"
     assert tokens[4].ancestor == tokens[5]  # "eckige" -> "Beine"
+
+
+def test_mapping_key_error(nlp):
+    # "gehen" in this context is a partial verb, and its only feature is VerbForm=Part
+    # Trying to access the regular Verb features (Tense, Person, Number) would raise a KeyError
+    # This is caught and the FeatureSet is set to None
+    doc = nlp("Ich werde nach Hause gehen.")
+    tokens = from_spacy_doc(doc)
+    assert tokens[4].feature_set is None
