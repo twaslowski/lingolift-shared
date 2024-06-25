@@ -2,6 +2,10 @@ from typing import List, Union
 
 from pydantic import BaseModel
 
+"""
+Deprecated, replaced by shared.model.token.Token
+"""
+
 
 class PartOfSpeech(BaseModel):
     value: str

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 
 from pydantic import BaseModel
@@ -13,6 +13,10 @@ class FeatureSet(ABC, BaseModel):
     This focuses specifically on a subset of features relevant to the German language.
     Reference: https://universaldependencies.org/u/feat/index.html
     """
+
+    @abstractmethod
+    def __str__(self):
+        pass
 
 
 class NounFeatureSet(FeatureSet):
